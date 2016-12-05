@@ -80,7 +80,9 @@ module ClientSideValidations
       end
 
       def run_conditional(method_name_value_or_proc)
-        if method_name_value_or_proc.respond_to?(:call)
+        if method_name_value_or_proc.respond_to?(:to_ary)
+          method_name_value_or_proc.inject(true) { |acc, elem| acc && run_conditional(elem) }
+        elsif method_name_value_or_proc.respond_to?(:call)
           method_name_value_or_proc.call self
         else
           send method_name_value_or_proc
